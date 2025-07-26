@@ -1,4 +1,4 @@
-FROM rust:1.88.0-slim@sha256:d62f2139b1f523b4b048c59af6c5e8f2cbf6ab04e91ff87b2b9afb3fab3b930a AS builder
+FROM rust:1.88.0-slim@sha256:38bc5a86d998772d4aec2348656ed21438d20fcdce2795b56ca434cf21430d89 AS builder
 
 ENV CARGO_HOME="/cache/cargo"
 
