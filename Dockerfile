@@ -1,4 +1,4 @@
-FROM rust:1.88.0-slim@sha256:38bc5a86d998772d4aec2348656ed21438d20fcdce2795b56ca434cf21430d89 AS builder
+FROM rust:1.89.0-slim@sha256:6c828d9865870a3bc8c02919d73803df22cac59b583d8f2cb30a296abe64748f AS builder
 
 ENV CARGO_HOME="/cache/cargo"
 
@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=${CARGO_HOME} \
     rustup target add x86_64-unknown-linux-musl && \
     cargo build --release --locked --target x86_64-unknown-linux-musl
 
-FROM gcr.io/distroless/static-debian12@sha256:b7b9a6953e7bed6baaf37329331051d7bdc1b99c885f6dbeb72d75b1baad54f9 AS runtime
+FROM gcr.io/distroless/static-debian12@sha256:2e114d20aa6371fd271f854aa3d6b2b7d2e70e797bb3ea44fb677afec60db22c AS runtime
 LABEL maintainer="deadnews <deadnewsgit@gmail.com>"
 
 ENV SERVICE_PORT=8000
