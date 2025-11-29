@@ -5,21 +5,11 @@ use axum::{
     response::{IntoResponse, Json},
     routing::get,
 };
-use clap::Parser;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use sqlx::{PgPool, postgres::PgPoolOptions};
 use std::{env, net::SocketAddr};
 use tracing::info;
-
-#[derive(Parser)]
-#[command(name = "deadnews-template-rust")]
-#[command(about = "A Rust web service template")]
-struct Args {
-    /// Perform a health check against the given URL and exit
-    #[arg(long)]
-    healthcheck: Option<String>,
-}
 
 #[derive(Clone)]
 pub struct AppState {
@@ -36,22 +26,6 @@ struct DatabaseInfo {
 async fn main() {
     // Initialize structured logging
     tracing_subscriber::fmt().json().init();
-
-    let args = Args::parse();
-
-    // Handle health check mode
-    if let Some(url) = args.healthcheck {
-        match health_check(&url).await {
-            Ok(_) => {
-                println!("Health check succeeded");
-                std::process::exit(0);
-            }
-            Err(e) => {
-                eprintln!("Health check failed: {e}");
-                std::process::exit(1);
-            }
-        }
-    }
 
     // Get port from environment
     let port: u16 = env::var("SERVICE_PORT")
@@ -99,20 +73,6 @@ async fn main() {
         tracing::error!("Server error: {}", e);
         std::process::exit(1);
     });
-}
-
-async fn health_check(url: &str) -> anyhow::Result<()> {
-    let client = reqwest::Client::new();
-    let response = client.get(url).send().await?;
-
-    if response.status().is_success() {
-        Ok(())
-    } else {
-        Err(anyhow::anyhow!(
-            "Health check failed with status: {}",
-            response.status()
-        ))
-    }
 }
 
 async fn index() -> &'static str {

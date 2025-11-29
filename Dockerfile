@@ -22,6 +22,8 @@ LABEL maintainer="deadnews <deadnewsgit@gmail.com>"
 
 ENV SERVICE_PORT=8000
 
+COPY --from=ghcr.io/tarampampam/microcheck:1.2.0@sha256:42cdee55eddc4c5b5bd76cb6df5334ca22ce7dc21066aeea7d059898ffbf84fd /bin/httpcheck /bin/httpcheck
+
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/deadnews-template-rust /bin/template-rust
 
 USER nonroot:nonroot

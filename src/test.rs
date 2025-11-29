@@ -23,17 +23,17 @@ impl TestContext {
         let container = Postgres::default()
             .start()
             .await
-            .map_err(|e| anyhow::anyhow!("Failed to start container: {}", e))?;
+            .map_err(|e| anyhow::anyhow!("Failed to start container: {e}"))?;
 
         // Get host and port dynamically
         let host = container
             .get_host()
             .await
-            .map_err(|e| anyhow::anyhow!("Failed to get host: {}", e))?;
+            .map_err(|e| anyhow::anyhow!("Failed to get host: {e}"))?;
         let port = container
             .get_host_port_ipv4(5432)
             .await
-            .map_err(|e| anyhow::anyhow!("Failed to get port: {}", e))?;
+            .map_err(|e| anyhow::anyhow!("Failed to get port: {e}"))?;
 
         // Use the default credentials from the PostgreSQL module
         let connection_string = format!("postgres://postgres:postgres@{host}:{port}/postgres");
@@ -43,7 +43,7 @@ impl TestContext {
             .max_connections(5)
             .connect(&connection_string)
             .await
-            .map_err(|e| anyhow::anyhow!("Failed to connect to database: {}", e))?;
+            .map_err(|e| anyhow::anyhow!("Failed to connect to database: {e}"))?;
 
         let app_state = AppState { db: pool.clone() };
 
@@ -140,66 +140,6 @@ async fn test_get_database_info() -> anyhow::Result<()> {
     Ok(())
 }
 
-// Test health check function with a mock server
-#[tokio::test]
-async fn test_health_check_success() -> anyhow::Result<()> {
-    use tokio::net::TcpListener;
-
-    // Create a simple mock server that returns 200 OK
-    let mock_app = Router::new().route("/health", get(|| async { "OK" }));
-
-    let listener = TcpListener::bind("127.0.0.1:0").await?;
-    let addr = listener.local_addr()?;
-
-    // Start the mock server in background
-    tokio::spawn(async move {
-        axum::serve(listener, mock_app).await.unwrap();
-    });
-
-    // Give the server a moment to start
-    tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
-
-    let health_url = format!("http://{addr}/health");
-    let result = health_check(&health_url).await;
-
-    assert!(result.is_ok());
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_health_check_failure() -> anyhow::Result<()> {
-    // Test with a non-existent URL
-    let result = health_check("http://127.0.0.1:1/nonexistent").await;
-    assert!(result.is_err());
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_health_check_http_error() -> anyhow::Result<()> {
-    use tokio::net::TcpListener;
-
-    // Create a mock server that returns 500 error
-    let mock_app = Router::new().route(
-        "/health",
-        get(|| async { (StatusCode::INTERNAL_SERVER_ERROR, "Server Error") }),
-    );
-
-    let listener = TcpListener::bind("127.0.0.1:0").await?;
-    let addr = listener.local_addr()?;
-
-    tokio::spawn(async move {
-        axum::serve(listener, mock_app).await.unwrap();
-    });
-
-    tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
-
-    let health_url = format!("http://{addr}/health");
-    let result = health_check(&health_url).await;
-
-    assert!(result.is_err());
-    Ok(())
-}
-
 // Test database error handling
 #[tokio::test]
 async fn test_database_test_handler_error() -> anyhow::Result<()> {
@@ -227,20 +167,6 @@ async fn test_database_test_handler_error() -> anyhow::Result<()> {
     assert_eq!(json["error"], "Internal server error");
 
     Ok(())
-}
-
-// Test CLI argument parsing
-#[test]
-fn test_args_parsing() {
-    use clap::Parser;
-
-    // Test default args (no health check)
-    let args = Args::try_parse_from(["test"]).unwrap();
-    assert!(args.healthcheck.is_none());
-
-    // Test with health check URL
-    let args = Args::try_parse_from(["test", "--healthcheck", "http://example.com"]).unwrap();
-    assert_eq!(args.healthcheck, Some("http://example.com".to_string()));
 }
 
 // Test struct serialization/deserialization

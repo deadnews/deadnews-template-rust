@@ -2,8 +2,7 @@ services:
   template-rust:
     build: .
     healthcheck:
-      test:
-        [CMD, /bin/template-rust, --healthcheck, http://127.0.0.1:8000/health]
+      test: [CMD, /bin/httpcheck, http://127.0.0.1:8000/health]
       interval: 1m
       retries: 3
       timeout: 10s
