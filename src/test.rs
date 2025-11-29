@@ -5,7 +5,7 @@ use axum::{
 };
 use serde_json::Value;
 use sqlx::{PgPool, postgres::PgPoolOptions};
-use testcontainers::{ContainerAsync, runners::AsyncRunner};
+use testcontainers::{ContainerAsync, ImageExt, core::IntoContainerPort, runners::AsyncRunner};
 use testcontainers_modules::postgres::Postgres;
 use tower::ServiceExt;
 
@@ -21,6 +21,8 @@ impl TestContext {
     async fn new() -> anyhow::Result<Self> {
         // Start PostgreSQL container
         let container = Postgres::default()
+            .with_tag("18-alpine")
+            .with_mapped_port(0, 5432.tcp())
             .start()
             .await
             .map_err(|e| anyhow::anyhow!("Failed to start container: {e}"))?;
