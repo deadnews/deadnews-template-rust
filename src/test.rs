@@ -65,23 +65,12 @@ impl TestContext {
 }
 
 #[tokio::test]
-async fn test_index() -> anyhow::Result<()> {
-    let ctx = TestContext::new().await?;
-
-    let response = ctx.server.get("/").await;
-    response.assert_status_ok();
-    response.assert_text("Hello world!");
-
-    Ok(())
-}
-
-#[tokio::test]
 async fn test_health_check() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
 
     let response = ctx.server.get("/health").await;
     response.assert_status_ok();
-    response.assert_json(&json!("Healthy!"));
+    response.assert_text("Healthy");
 
     Ok(())
 }

@@ -1,5 +1,11 @@
 use axum::{Json, Router, extract::State, response::IntoResponse, routing::get};
 use sqlx::PgPool;
+use tower::ServiceBuilder;
+use tower_http::{
+    catch_panic::CatchPanicLayer,
+    request_id::{MakeRequestUuid, SetRequestIdLayer},
+    trace::TraceLayer,
+};
 
 use crate::db::get_database_info;
 use crate::error::AppError;
@@ -11,18 +17,19 @@ pub struct AppState {
 
 pub fn create_router(state: AppState) -> Router {
     Router::new()
-        .route("/", get(index))
         .route("/health", get(health_check))
         .route("/test", get(database_test))
+        .layer(
+            ServiceBuilder::new()
+                .layer(SetRequestIdLayer::x_request_id(MakeRequestUuid))
+                .layer(TraceLayer::new_for_http())
+                .layer(CatchPanicLayer::new()),
+        )
         .with_state(state)
 }
 
-async fn index() -> &'static str {
-    "Hello world!"
-}
-
-async fn health_check() -> impl IntoResponse {
-    Json("Healthy!")
+async fn health_check() -> &'static str {
+    "Healthy"
 }
 
 pub async fn database_test(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {

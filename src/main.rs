@@ -1,3 +1,8 @@
+// Avoid musl's default allocator
+#[cfg(target_env = "musl")]
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 mod config;
 mod db;
 mod error;
@@ -11,8 +16,11 @@ use tracing::{error, info};
 
 #[tokio::main]
 async fn main() {
-    // Initialize structured logging
-    tracing_subscriber::fmt().json().init();
+    // Initialize logging
+    tracing_subscriber::fmt()
+        .json()
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .init();
 
     // Load configuration
     let config = Config::from_env();

@@ -1,6 +1,9 @@
 services:
   template-rust:
-    build: .
+    build:
+      context: .
+      args:
+        PROFILE: dev-build
     healthcheck:
       test: [CMD, /bin/httpcheck, http://127.0.0.1:8000/health]
       interval: 1m
@@ -9,6 +12,7 @@ services:
       start_period: 1m
     environment:
       SERVICE_DSN: postgres://postgres:postgres@postgres:5432/postgres
+      RUST_LOG: deadnews_template_rust=info,tower_http=debug
     ports:
       - 127.0.0.1:8000:8000/tcp
 
