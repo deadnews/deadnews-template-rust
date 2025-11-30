@@ -5,12 +5,10 @@ ENV CARGO_HOME="/cache/cargo"
 
 WORKDIR /app
 
-COPY Cargo.toml Cargo.lock ./
-COPY src/ ./src/
-
 RUN --mount=type=cache,target="/var/cache/apk" \
     apk add musl-dev
 
+COPY --parents Cargo.toml Cargo.lock src/ ./
 RUN --mount=type=cache,target=${CARGO_HOME} \
     cargo build --locked --profile ${PROFILE}
 
