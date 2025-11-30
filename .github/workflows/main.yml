@@ -50,7 +50,7 @@ jobs:
 
       - uses: taiki-e/install-action@b4b80945859e8ef89a9732a0f46499a443b196fe # v2.62.59
         with:
-          tool: cargo-llvm-cov
+          tool: nextest,cargo-llvm-cov
 
       - name: Run tests
         run: make test-codecov

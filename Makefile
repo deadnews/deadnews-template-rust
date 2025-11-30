@@ -35,7 +35,7 @@ test-cov:
 	cargo llvm-cov report --lcov --output-path lcov.info
 
 test-codecov:
-	cargo llvm-cov --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
+	cargo llvm-cov nextest --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
 
 doc:
 	cargo doc --no-deps --document-private-items
