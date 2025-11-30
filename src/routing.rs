@@ -1,9 +1,8 @@
-use axum::{Json, Router, extract::State, http::StatusCode, response::IntoResponse, routing::get};
-use serde_json::json;
+use axum::{Json, Router, extract::State, response::IntoResponse, routing::get};
 use sqlx::PgPool;
-use tracing::error;
 
 use crate::db::get_database_info;
+use crate::error::AppError;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -23,19 +22,10 @@ async fn index() -> &'static str {
 }
 
 async fn health_check() -> impl IntoResponse {
-    Json(json!("Healthy!"))
+    Json("Healthy!")
 }
 
-pub async fn database_test(State(state): State<AppState>) -> impl IntoResponse {
-    match get_database_info(&state.db).await {
-        Ok(info) => Json(info).into_response(),
-        Err(e) => {
-            error!("Failed to get database info: {e}");
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({"error": "Internal server error"})),
-            )
-                .into_response()
-        }
-    }
+pub async fn database_test(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {
+    let info = get_database_info(&state.db).await?;
+    Ok(Json(info))
 }

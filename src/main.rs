@@ -1,5 +1,6 @@
 mod config;
 mod db;
+mod error;
 mod routing;
 
 use config::Config;

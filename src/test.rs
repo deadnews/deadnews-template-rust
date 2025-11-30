@@ -1,6 +1,6 @@
 use axum::{Router, routing::get};
 use axum_test::TestServer;
-use serde_json::{Value, json};
+use serde_json::json;
 use sqlx::{PgPool, postgres::PgPoolOptions};
 use testcontainers::{
     ContainerAsync, GenericImage, ImageExt,
@@ -93,15 +93,9 @@ async fn test_database_endpoint() -> anyhow::Result<()> {
     let response = ctx.server.get("/test").await;
     response.assert_status_ok();
 
-    // Verify expected fields are present and correct
-    let json: Value = response.json();
-    assert_eq!(json["database"], "testdb");
-    assert!(
-        json["version"]
-            .as_str()
-            .expect("version should be a string")
-            .contains("PostgreSQL")
-    );
+    let db_info: DatabaseInfo = response.json();
+    assert_eq!(db_info.database, "testdb");
+    assert!(db_info.version.contains("PostgreSQL"));
 
     Ok(())
 }
