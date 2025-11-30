@@ -23,22 +23,22 @@ pc:
 	prek run -a
 lint:
 	cargo fmt --all
-	cargo clippy --fix --allow-dirty --all-features -- -D warnings
+	cargo clippy --fix --allow-dirty --all-targets -- -D warnings
 lint-ci:
 	cargo fmt --all --check
-	cargo clippy --all-targets --all-features -- -D warnings
+	cargo clippy --all-targets -- -D warnings
 test:
-	cargo test --all-features
+	cargo nextest run
 
 test-cov:
-	cargo llvm-cov --ignore-filename-regex 'test.rs'
+	cargo llvm-cov nextest --ignore-filename-regex 'test.rs'
 	cargo llvm-cov report --lcov --output-path lcov.info
 
 test-codecov:
-	cargo llvm-cov --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
+	cargo llvm-cov nextest --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
 
 doc:
-	cargo doc --no-deps --document-private-items --all-features
+	cargo doc --no-deps --document-private-items
 
 bumped:
 	git cliff --bumped-version

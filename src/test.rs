@@ -1,27 +1,33 @@
-use axum::{
-    Router,
-    body::Body,
-    http::{Request, StatusCode},
-};
-use serde_json::Value;
+use axum::{Router, routing::get};
+use axum_test::TestServer;
+use serde_json::{Value, json};
 use sqlx::{PgPool, postgres::PgPoolOptions};
-use testcontainers::{ContainerAsync, ImageExt, core::IntoContainerPort, runners::AsyncRunner};
-use testcontainers_modules::postgres::Postgres;
-use tower::ServiceExt;
+use testcontainers::{
+    ContainerAsync, GenericImage, ImageExt,
+    core::{IntoContainerPort, WaitFor},
+    runners::AsyncRunner,
+};
 
-use super::*;
+use crate::db::{DatabaseInfo, get_database_info};
+use crate::routing::{AppState, create_router, database_test};
 
 struct TestContext {
-    _container: ContainerAsync<Postgres>,
+    _container: ContainerAsync<GenericImage>,
     pool: PgPool,
-    app: Router,
+    server: TestServer,
 }
 
 impl TestContext {
     async fn new() -> anyhow::Result<Self> {
         // Start PostgreSQL container
-        let container = Postgres::default()
-            .with_tag("18-alpine")
+        let container = GenericImage::new("postgres", "18-alpine")
+            .with_exposed_port(5432.tcp())
+            .with_wait_for(WaitFor::message_on_stderr(
+                "database system is ready to accept connections",
+            ))
+            .with_env_var("POSTGRES_USER", "testuser")
+            .with_env_var("POSTGRES_PASSWORD", "testpass")
+            .with_env_var("POSTGRES_DB", "testdb")
             .with_mapped_port(0, 5432.tcp())
             .start()
             .await
@@ -37,8 +43,8 @@ impl TestContext {
             .await
             .map_err(|e| anyhow::anyhow!("Failed to get port: {e}"))?;
 
-        // Use the default credentials from the PostgreSQL module
-        let connection_string = format!("postgres://postgres:postgres@{host}:{port}/postgres");
+        // Build connection string
+        let connection_string = format!("postgres://testuser:testpass@{host}:{port}/testdb");
 
         // Create connection pool
         let pool = PgPoolOptions::new()
@@ -47,18 +53,13 @@ impl TestContext {
             .await
             .map_err(|e| anyhow::anyhow!("Failed to connect to database: {e}"))?;
 
-        let app_state = AppState { db: pool.clone() };
+        let app = create_router(AppState { db: pool.clone() });
+        let server = TestServer::new(app)?;
 
-        let app = Router::new()
-            .route("/", get(index))
-            .route("/health", get(health_check_handler))
-            .route("/test", get(database_test_handler))
-            .with_state(app_state);
-
-        Ok(TestContext {
+        Ok(Self {
             _container: container,
             pool,
-            app,
+            server,
         })
     }
 }
@@ -67,65 +68,40 @@ impl TestContext {
 async fn test_index() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
 
-    let response = ctx
-        .app
-        .clone()
-        .oneshot(Request::builder().uri("/").body(Body::empty())?)
-        .await?;
-
-    assert_eq!(response.status(), StatusCode::OK);
-
-    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await?;
-    let body_str = String::from_utf8(body.to_vec())?;
-    assert_eq!(body_str, "Hello world!");
+    let response = ctx.server.get("/").await;
+    response.assert_status_ok();
+    response.assert_text("Hello world!");
 
     Ok(())
 }
 
 #[tokio::test]
-async fn test_health_check_handler() -> anyhow::Result<()> {
+async fn test_health_check() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
 
-    let response = ctx
-        .app
-        .clone()
-        .oneshot(Request::builder().uri("/health").body(Body::empty())?)
-        .await?;
-
-    assert_eq!(response.status(), StatusCode::OK);
-
-    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await?;
-    let json: Value = serde_json::from_slice(&body)?;
-    assert_eq!(json, "Healthy!");
+    let response = ctx.server.get("/health").await;
+    response.assert_status_ok();
+    response.assert_json(&json!("Healthy!"));
 
     Ok(())
 }
 
 #[tokio::test]
-async fn test_database_test_handler() -> anyhow::Result<()> {
+async fn test_database_endpoint() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
 
-    let response = ctx
-        .app
-        .clone()
-        .oneshot(Request::builder().uri("/test").body(Body::empty())?)
-        .await?;
+    let response = ctx.server.get("/test").await;
+    response.assert_status_ok();
 
-    assert_eq!(response.status(), StatusCode::OK);
-
-    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await?;
-    let json: Value = serde_json::from_slice(&body)?;
-
-    // Verify expected fields are present
-    assert!(json.get("database").is_some());
-    assert!(json.get("version").is_some());
-
-    // Verify database name is correct
-    assert_eq!(json["database"], "postgres");
-
-    // Verify version contains PostgreSQL
-    let version = json["version"].as_str().unwrap();
-    assert!(version.contains("PostgreSQL"));
+    // Verify expected fields are present and correct
+    let json: Value = response.json();
+    assert_eq!(json["database"], "testdb");
+    assert!(
+        json["version"]
+            .as_str()
+            .expect("version should be a string")
+            .contains("PostgreSQL")
+    );
 
     Ok(())
 }
@@ -135,8 +111,7 @@ async fn test_get_database_info() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
 
     let db_info = get_database_info(&ctx.pool).await?;
-
-    assert_eq!(db_info.database, "postgres");
+    assert_eq!(db_info.database, "testdb");
     assert!(db_info.version.contains("PostgreSQL"));
 
     Ok(())
@@ -144,50 +119,40 @@ async fn test_get_database_info() -> anyhow::Result<()> {
 
 // Test database error handling
 #[tokio::test]
-async fn test_database_test_handler_error() -> anyhow::Result<()> {
-    // Create a test that simulates a database error
-    // by closing the connection pool in the existing working test
+async fn test_database_error_handling() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
 
     // Close all connections in the pool to simulate database failure
     ctx.pool.close().await;
 
-    let app_state = AppState { db: ctx.pool };
     let app = Router::new()
-        .route("/test", get(database_test_handler))
-        .with_state(app_state);
-
-    let response = app
-        .oneshot(Request::builder().uri("/test").body(Body::empty())?)
-        .await?;
+        .route("/test", get(database_test))
+        .with_state(AppState { db: ctx.pool });
+    let server = TestServer::new(app)?;
 
     // Should return 500 error when database is unavailable
-    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
-
-    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await?;
-    let json: Value = serde_json::from_slice(&body)?;
-    assert_eq!(json["error"], "Internal server error");
+    let response = server.get("/test").await;
+    response.assert_status_internal_server_error();
+    response.assert_json(&json!({"error": "Internal server error"}));
 
     Ok(())
 }
 
 // Test struct serialization/deserialization
 #[test]
-fn test_database_info_serialization() -> anyhow::Result<()> {
-    let db_info = DatabaseInfo {
+fn test_database_info_serde() -> anyhow::Result<()> {
+    let info = DatabaseInfo {
         database: "test_db".to_string(),
         version: "PostgreSQL 13.0".to_string(),
     };
 
     // Test serialization
-    let json = serde_json::to_string(&db_info)?;
-    assert!(json.contains("test_db"));
-    assert!(json.contains("PostgreSQL 13.0"));
+    let json = serde_json::to_string(&info)?;
 
     // Test deserialization
     let deserialized: DatabaseInfo = serde_json::from_str(&json)?;
-    assert_eq!(deserialized.database, "test_db");
-    assert_eq!(deserialized.version, "PostgreSQL 13.0");
+    assert_eq!(deserialized.database, info.database);
+    assert_eq!(deserialized.version, info.version);
 
     Ok(())
 }
@@ -196,17 +161,17 @@ fn test_database_info_serialization() -> anyhow::Result<()> {
 #[tokio::test]
 async fn test_app_state_clone() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
-    let app_state = AppState {
+    let state = AppState {
         db: ctx.pool.clone(),
     };
 
     // Test that AppState can be cloned
-    let cloned_state = app_state.clone();
+    let cloned = state.clone();
 
     // Both should be able to get database info
-    let db_info1 = get_database_info(&app_state.db).await?;
-    let db_info2 = get_database_info(&cloned_state.db).await?;
+    let info1 = get_database_info(&state.db).await?;
+    let info2 = get_database_info(&cloned.db).await?;
+    assert_eq!(info1.database, info2.database);
 
-    assert_eq!(db_info1.database, db_info2.database);
     Ok(())
 }
