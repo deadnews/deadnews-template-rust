@@ -28,7 +28,6 @@ impl TestContext {
             .with_env_var("POSTGRES_USER", "testuser")
             .with_env_var("POSTGRES_PASSWORD", "testpass")
             .with_env_var("POSTGRES_DB", "testdb")
-            .with_mapped_port(0, 5432.tcp())
             .start()
             .await
             .map_err(|e| anyhow::anyhow!("Failed to start container: {e}"))?;

@@ -21,7 +21,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
 [dev-dependencies]
 axum-test      = { version = "18.3" }
-testcontainers = { version = "0.25" }
+testcontainers = { version = "0.26" }
 
 [target.'cfg(target_env = "musl")'.dependencies]
 mimalloc = { version = "0.1" }
