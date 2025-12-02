@@ -6,7 +6,7 @@
       "customType": "regex",
       "datasourceTemplate": "docker",
       "description": "Testcontainers: detect docker images",
-      "fileMatch": ["test.rs$"],
+      "managerFilePatterns": ["/test.rs$/"],
       "matchStrings": [
         "GenericImage::new\\(\"(?<depName>[\\w\\-/]+)\", \"(?<currentValue>[\\w\\.\\-]+)\"\\)"
       ],
