@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1-alpha.0](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.0...v1.2.1-alpha.0) - 2025-12-02
+
+### Chores
+
+- _(config)_ migrate Renovate config ([#116](https://github.com/deadnews/deadnews-template-rust/issues/116)) - ([3968f05](https://github.com/deadnews/deadnews-template-rust/commit/3968f05a5c32b4f7356e2b928f6c749020484ea9))
+- _(github)_ fix sed command for setting version in `cargo.toml` - ([d382009](https://github.com/deadnews/deadnews-template-rust/commit/d3820091e7321e82488557d2ed7f4b0242767189))
+- _(renovate)_ fix config - ([29a2dbb](https://github.com/deadnews/deadnews-template-rust/commit/29a2dbb6d5851697517b7b2fdb23a4e05152547e))
+
 ## [1.2.0](https://github.com/deadnews/deadnews-template-rust/compare/v1.1.0...v1.2.0) - 2025-12-02
 
 ### Features
