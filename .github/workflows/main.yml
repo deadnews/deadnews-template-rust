@@ -78,7 +78,7 @@ jobs:
 
       - name: Set version in Cargo.toml
         run: |
-          sed "s|^version =.*$|version = '${GITHUB_REF_NAME#v}'|" -i Cargo.toml
+          sed "s|^version.*=.*$|version = '${GITHUB_REF_NAME#v}'|" -i Cargo.toml
 
       - name: Sync Cargo.lock version
         run: cargo generate-lockfile
@@ -105,7 +105,7 @@ jobs:
 
       - name: Set version in Cargo.toml
         run: |
-          sed "s|^version =.*$|version = '${GITHUB_REF_NAME#v}'|" -i Cargo.toml
+          sed "s|^version.*=.*$|version = '${GITHUB_REF_NAME#v}'|" -i Cargo.toml
 
       - name: Build wheel with maturin
         uses: PyO3/maturin-action@86b9d133d34bc1b40018696f782949dac11bd380 # v1.49.4
