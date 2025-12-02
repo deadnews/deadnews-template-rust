@@ -1,6 +1,10 @@
 # Changelog
 
-## [unreleased]
+## [1.2.0](https://github.com/deadnews/deadnews-template-rust/compare/v1.1.0...v1.2.0) - 2025-12-02
+
+### Features
+
+- update project structure ([#114](https://github.com/deadnews/deadnews-template-rust/issues/114)) - ([bdad033](https://github.com/deadnews/deadnews-template-rust/commit/bdad0334dbf1e1b00a2100585cc9951abb6714a8))
 
 ### Bug fixes
 
@@ -12,12 +16,13 @@
 
 ### Chores
 
+- _(git-cliff)_ update config - ([816c3b2](https://github.com/deadnews/deadnews-template-rust/commit/816c3b2281f984a0944865e0b851ab3722a00f7f))
 - _(github)_ add code coverage support ([#91](https://github.com/deadnews/deadnews-template-rust/issues/91)) - ([e483977](https://github.com/deadnews/deadnews-template-rust/commit/e48397735b5137eee78f430c8ef24a36e6e952ac))
 - standardize repository references ([#92](https://github.com/deadnews/deadnews-template-rust/issues/92)) - ([b2fccfb](https://github.com/deadnews/deadnews-template-rust/commit/b2fccfb9804b03d3e833e52d2f23741f3e120a2e))
 
 ### Dependencies
 
-- update rust crate reqwest to v0.12.22 ([#96](https://github.com/deadnews/deadnews-template-rust/issues/96)) - ([e9525db](https://github.com/deadnews/deadnews-template-rust/commit/e9525db54f1361d3eae30b3477f406b68ff81ff2))
+- update cargo dependencies ([#105](https://github.com/deadnews/deadnews-template-rust/issues/105)) - ([d0a8112](https://github.com/deadnews/deadnews-template-rust/commit/d0a8112a29f2cc72ff592b520406d86afedb36f6))
 
 ## [1.1.0](https://github.com/deadnews/deadnews-template-rust/compare/v1.0.0...v1.1.0) - 2025-06-30
 
@@ -113,7 +118,7 @@
 - set explicit permissions - ([525debd](https://github.com/deadnews/deadnews-template-rust/commit/525debdfd6a5c53fc7e6f6b4eeeb74f7549b10c0))
 - update `cd` workflow - ([b53fa90](https://github.com/deadnews/deadnews-template-rust/commit/b53fa90afb9b51d9261330f4f1cd2934ca5f8293))
 
-## [0.1.0](https://github.com/deadnews/deadnews-template-rust/commit/v0.1.0) - 2023-09-24
+## [0.1.0](https://github.com/deadnews/deadnews-template-rust/commits/v0.1.0) - 2023-09-24
 
 ### Features
 
