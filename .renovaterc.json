@@ -7,7 +7,6 @@
       "datasourceTemplate": "docker",
       "description": "Testcontainers: detect docker images",
       "fileMatch": ["test.rs$"],
-      "groupName": "docker tags",
       "matchStrings": [
         "GenericImage::new\\(\"(?<depName>[\\w\\-/]+)\", \"(?<currentValue>[\\w\\.\\-]+)\"\\)"
       ],
