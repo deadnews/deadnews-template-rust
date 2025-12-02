@@ -12,29 +12,33 @@ goreleaser:
 	goreleaser --clean --snapshot --skip=publish
 
 install:
-	pre-commit install
+	prek install
 
 update:
-	cargo update --recursive
+	cargo update --recursive --verbose
+	prek auto-update
 
 check: pc lint test
 pc:
-	pre-commit run -a
+	prek run -a
 lint:
+	cargo fmt --all
+	cargo clippy --fix --allow-dirty --all-targets -- -D warnings
+lint-ci:
 	cargo fmt --all --check
-	cargo clippy --all-targets --all-features -- -D warnings
+	cargo clippy --all-targets -- -D warnings
 test:
-	cargo test --all-features
+	cargo nextest run
 
 test-cov:
-	cargo llvm-cov --ignore-filename-regex 'test.rs'
+	cargo llvm-cov nextest --ignore-filename-regex 'test.rs'
 	cargo llvm-cov report --lcov --output-path lcov.info
 
 test-codecov:
-	cargo llvm-cov --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
+	cargo llvm-cov nextest --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
 
 doc:
-	cargo doc --no-deps --document-private-items --all-features
+	cargo doc --no-deps --document-private-items
 
 bumped:
 	git cliff --bumped-version
@@ -42,7 +46,7 @@ bumped:
 # make release TAG=$(git cliff --bumped-version)-alpha.0
 release: check
 	git cliff -o CHANGELOG.md --tag $(TAG)
-	pre-commit run --files CHANGELOG.md || pre-commit run --files CHANGELOG.md
+	prek run --files CHANGELOG.md || prek run --files CHANGELOG.md
 	git add CHANGELOG.md
 	git commit -m "chore(release): prepare for $(TAG)"
 	git push

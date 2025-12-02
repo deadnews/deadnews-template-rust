@@ -22,3 +22,6 @@ dist
 codecov.json
 coverage.xml
 lcov.info
+
+# Temporary files
+.temp.md

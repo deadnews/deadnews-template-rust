@@ -1,9 +1,11 @@
 {
   "[rust]": {
-    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
     },
+    "editor.formatOnSave": true,
     "editor.inlayHints.enabled": "offUnlessPressed" // toggled with Ctrl+Alt
-  }
+  },
+  "rust-analyzer.check.allTargets": true,
+  "rust-analyzer.check.command": "clippy"
 }

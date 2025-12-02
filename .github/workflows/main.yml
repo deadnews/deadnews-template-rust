@@ -27,7 +27,7 @@ jobs:
         uses: swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2.8.2
 
       - name: Lint code
-        run: make lint
+        run: make lint-ci
 
   test:
     name: Test
@@ -50,7 +50,7 @@ jobs:
 
       - uses: taiki-e/install-action@b4b80945859e8ef89a9732a0f46499a443b196fe # v2.62.59
         with:
-          tool: cargo-llvm-cov
+          tool: nextest,cargo-llvm-cov
 
       - name: Run tests
         run: make test-codecov

@@ -21,7 +21,7 @@ cargo install deadnews-template-rust
 PyPI
 
 ```sh
-pipx install deadnews-template-rust
+uv tool install deadnews-template-rust
 ```
 
 Docker

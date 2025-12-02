@@ -1,9 +1,17 @@
 services:
   template-rust:
-    build: .
+    build:
+      context: .
+      args:
+        PROFILE: dev-build
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges]
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
-      test:
-        [CMD, /bin/template-rust, --healthcheck, http://127.0.0.1:8000/health]
+      test: [CMD, /bin/httpcheck, http://127.0.0.1:8000/health]
       interval: 1m
       retries: 3
       timeout: 10s
@@ -12,9 +20,10 @@ services:
       - 127.0.0.1:8000:8000/tcp
     environment:
       SERVICE_DSN: postgres://postgres:postgres@postgres:5432/postgres
+      RUST_LOG: deadnews_template_rust=info,tower_http=debug
 
   postgres:
-    image: postgres@sha256:5ec39c188013123927f30a006987c6b0e20f3ef2b54b140dfa96dac6844d883f
+    image: postgres:18-alpine
     healthcheck:
       test: [CMD, pg_isready, -U, postgres]
       interval: 1m
