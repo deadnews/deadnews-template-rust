@@ -1,4 +1,4 @@
-FROM rust:1.91.1-alpine@sha256:8efbfb788786eeb127adc581394349c5fb567712156e0f8c2e499acadbc23756 AS builder
+FROM rust:1.92.0-alpine@sha256:71571f70b9040894fad9194ab3bc70ca1ccd705e1af979d8d79be74fa7ebcfcd AS builder
 
 ARG PROFILE=release
 ENV CARGO_HOME="/cache/cargo"
