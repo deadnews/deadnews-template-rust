@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.2.2-alpha.0](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.1...v1.2.2-alpha.0) - 2025-12-15
+## [1.2.2-alpha.1](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.1...v1.2.2-alpha.1) - 2025-12-15
 
 ### Chores
 
