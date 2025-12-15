@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2-alpha.0](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.1...v1.2.2-alpha.0) - 2025-12-15
+
+### Chores
+
+- _(prek)_ add `zizmor` hook - ([37b7a24](https://github.com/deadnews/deadnews-template-rust/commit/37b7a242a16d99be2ac22cc5a0dad2fbde850a6c))
+
 ## [1.2.1](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.0...v1.2.1) - 2025-12-02
 
 ### Chores
