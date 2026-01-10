@@ -1,22 +1,6 @@
-.PHONY: all clean default run build install check lint pc test release
+.PHONY: all clean default run build update up check lint pc test release
 
 default: check
-
-run:
-	cargo run
-
-build:
-	cargo build
-
-goreleaser:
-	goreleaser --clean --snapshot --skip=publish
-
-install:
-	prek install
-
-update:
-	cargo update --recursive --verbose
-	prek auto-update
 
 check: pc lint test
 pc:
@@ -36,6 +20,22 @@ test-cov:
 
 test-codecov:
 	cargo llvm-cov nextest --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
+
+update: up up-ci
+up:
+	cargo update --recursive --verbose
+up-ci:
+	prek auto-update
+	pinact run -update
+
+run:
+	cargo run
+
+build:
+	cargo build
+
+goreleaser:
+	goreleaser --clean --snapshot --skip=publish
 
 doc:
 	cargo doc --no-deps --document-private-items
