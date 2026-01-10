@@ -23,5 +23,13 @@ codecov.json
 coverage.xml
 lcov.info
 
-# Temporary files
-.temp.md
+# todo
+*.todo.md
+
+# vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
