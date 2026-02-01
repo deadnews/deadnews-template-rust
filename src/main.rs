@@ -13,14 +13,14 @@ use routing::{AppState, create_router};
 use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use tracing::{error, info};
-use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+use tracing_subscriber::{EnvFilter, prelude::*};
 
 #[tokio::main]
 async fn main() {
     // Initialize logging
     tracing_subscriber::registry()
         .with(EnvFilter::from_default_env())
-        .with(fmt::layer().json())
+        .with(tracing_logfmt::layer())
         .init();
 
     // Load configuration
