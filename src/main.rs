@@ -13,13 +13,14 @@ use routing::{AppState, create_router};
 use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use tracing::{error, info};
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 #[tokio::main]
 async fn main() {
     // Initialize logging
-    tracing_subscriber::fmt()
-        .json()
-        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+    tracing_subscriber::registry()
+        .with(EnvFilter::from_default_env())
+        .with(fmt::layer().json())
         .init();
 
     // Load configuration
@@ -37,7 +38,7 @@ async fn main() {
 
     // Run the app
     let app = create_router(AppState { db: pool });
-    let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
     info!("Starting HTTP server at http://{addr}");
 
     let listener = tokio::net::TcpListener::bind(addr)
