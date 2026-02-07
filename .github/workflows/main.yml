@@ -48,7 +48,7 @@ jobs:
       - name: Rust Cache
         uses: swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2.8.2
 
-      - uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2.67.18
+      - uses: taiki-e/install-action@f176c07a0a40cbfdd08ee9aa8bf1655701d11e69 # v2.67.25
         with:
           tool: nextest,cargo-llvm-cov
 
@@ -111,7 +111,7 @@ jobs:
           sed "s|^version.*=.*$|version = '${GITHUB_REF_NAME#v}'|" -i Cargo.toml
 
       - name: Build wheel with maturin
-        uses: PyO3/maturin-action@86b9d133d34bc1b40018696f782949dac11bd380 # v1.49.4
+        uses: PyO3/maturin-action@b1bd829e37fef14c63f19162034228a2f3dc1021 # v1.50.0
         with:
           command: build
           args: --release --out dist
