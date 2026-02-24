@@ -25,7 +25,7 @@ update: up up-ci
 up:
 	cargo update --recursive --verbose
 up-ci:
-	prek auto-update
+	prek auto-update --freeze
 	pinact run -update
 
 run:
