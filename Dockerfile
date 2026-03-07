@@ -1,4 +1,4 @@
-FROM rust:1.93.0-alpine@sha256:69d7b9d9aeaf108a1419d9a7fcf7860dcc043e9dbd1ab7ce88e44228774d99e9 AS builder
+FROM rust:1.94.0-alpine@sha256:ef7b340d4201444fa2757dfddfd4c03be9d2bde468de7b7a68b0e9fabb794334 AS builder
 
 ARG PROFILE=release
 ENV CARGO_HOME="/cache/cargo" \
@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=${CARGO_HOME} \
     cargo build --locked --profile ${PROFILE} && \
     cp ${CARGO_TARGET_DIR}/${PROFILE}/deadnews-template-rust /bin/template-rust
 
-FROM gcr.io/distroless/static-debian13@sha256:972618ca78034aaddc55864342014a96b85108c607372f7cbd0dbd1361f1d841 AS runtime
+FROM gcr.io/distroless/static-debian13@sha256:28efbe90d0b2f2a3ee465cc5b44f3f2cf5533514cf4d51447a977a5dc8e526d0 AS runtime
 
 COPY --from=ghcr.io/tarampampam/microcheck:1.3.0@sha256:79c187c05bfa67518078bf4db117771942fa8fe107dc79a905861c75ddf28dfa /bin/httpcheck /bin/httpcheck
 
