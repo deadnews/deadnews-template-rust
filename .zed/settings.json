@@ -11,8 +11,7 @@
       "initialization_options": {
         "check": {
           "command": "clippy"
-        },
-        "checkOnSave": true
+        }
       }
     }
   }
