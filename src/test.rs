@@ -53,7 +53,7 @@ impl TestContext {
             .map_err(|e| anyhow::anyhow!("Failed to connect to database: {e}"))?;
 
         let app = create_router(AppState { db: pool.clone() });
-        let server = TestServer::new(app)?;
+        let server = TestServer::new(app);
 
         Ok(Self {
             _container: container,
@@ -110,7 +110,7 @@ async fn test_database_error_handling() -> anyhow::Result<()> {
     let app = Router::new()
         .route("/test", get(database_test))
         .with_state(AppState { db: ctx.pool });
-    let server = TestServer::new(app)?;
+    let server = TestServer::new(app);
 
     // Should return 500 error when database is unavailable
     let response = server.get("/test").await;
