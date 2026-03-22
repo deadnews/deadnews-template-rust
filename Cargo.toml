@@ -35,7 +35,7 @@ strip = true # Remove debug symbols and reduce binary size
 inherits = "dev"
 
 [lints.rust]
-unsafe_code = "deny"
+unsafe_code = "forbid"
 
 [lints.clippy]
 pedantic    = { level = "warn", priority = -1 }
