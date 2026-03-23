@@ -21,7 +21,7 @@ tracing-logfmt     = { version = "0.3" }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [dev-dependencies]
-axum-test      = { version = "18.7" }
+axum-test      = { version = "19.0" }
 testcontainers = { version = "0.27" }
 
 [target.'cfg(target_env = "musl")'.dependencies]
