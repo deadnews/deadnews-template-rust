@@ -1,10 +1,33 @@
 # Changelog
 
-## [1.2.2-alpha.1](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.1...v1.2.2-alpha.1) - 2025-12-15
+## [1.2.2-alpha.2](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.1...v1.2.2-alpha.2) - 2026-03-24
+
+### Refactor
+
+- _(app)_ propagate errors during startup and db access - ([619d4d1](https://github.com/deadnews/deadnews-template-rust/commit/619d4d11f78f3171ee5906b149f7b557be0dfe33))
+- update app structure - ([5f0a680](https://github.com/deadnews/deadnews-template-rust/commit/5f0a680fca333ceddea7933a4d68964554798302))
+
+### Documentation
+
+- _(readme)_ fix coverage badge url - ([12f43ff](https://github.com/deadnews/deadnews-template-rust/commit/12f43ff4f59b53c022505ec93a19e4c0120fc385))
+
+### Build
+
+- _(cargo)_ set `codegen-units=1` - ([e35b509](https://github.com/deadnews/deadnews-template-rust/commit/e35b5099f28db3b4b9a046637887bbf3a249f8d2))
+- _(dockerfile)_ update rust base image digest - ([775a486](https://github.com/deadnews/deadnews-template-rust/commit/775a48609d2ae32009e88cd6e3eaa2a534dd9908))
+- _(dockerfile)_ improve caching ([#130](https://github.com/deadnews/deadnews-template-rust/issues/130)) - ([3eceb3b](https://github.com/deadnews/deadnews-template-rust/commit/3eceb3b220208b344864668e0803e484afec61df))
+
+### Styling
+
+- align `rust-toolchain.toml` spacing - ([071cb82](https://github.com/deadnews/deadnews-template-rust/commit/071cb82887b958a31f16d40e1a15d88adbeaa0a8))
 
 ### Chores
 
-- _(prek)_ add `zizmor` hook - ([37b7a24](https://github.com/deadnews/deadnews-template-rust/commit/37b7a242a16d99be2ac22cc5a0dad2fbde850a6c))
+- _(github)_ replace `pre-commit` with `prek` - ([7e4821e](https://github.com/deadnews/deadnews-template-rust/commit/7e4821e7545b0551aec0b18b5386beb535515165))
+- _(github)_ replace docker reusable workflow ([#129](https://github.com/deadnews/deadnews-template-rust/issues/129)) - ([e03cf04](https://github.com/deadnews/deadnews-template-rust/commit/e03cf04b4b5a65c337879dcba65969aeec17d74e))
+- _(lints)_ forbid `unsafe_code` - ([7026c0a](https://github.com/deadnews/deadnews-template-rust/commit/7026c0a4ff318676b384d91103f698ca0064eae6))
+- _(prek)_ use pinned tags - ([75d4a77](https://github.com/deadnews/deadnews-template-rust/commit/75d4a77d47dedb8a7ff910b252ad5589073964ec))
+- _(prek)_ add `zizmor` hook ([#122](https://github.com/deadnews/deadnews-template-rust/issues/122)) - ([38d2796](https://github.com/deadnews/deadnews-template-rust/commit/38d2796e224d53795d8f788735cfc1851bdd8213))
 
 ## [1.2.1](https://github.com/deadnews/deadnews-template-rust/compare/v1.2.0...v1.2.1) - 2025-12-02
 
