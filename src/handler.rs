@@ -1,5 +1,17 @@
-use axum::{Json, http::StatusCode, response::IntoResponse};
+use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use serde::Serialize;
+
+use crate::app::App;
+use crate::db::get_database_info;
+
+pub async fn health_check() -> &'static str {
+    "Healthy\n"
+}
+
+pub async fn database_test(State(app): State<App>) -> Result<impl IntoResponse, AppError> {
+    let info = get_database_info(&app.db).await?;
+    Ok(Json(info))
+}
 
 /// Wraps any error into an HTTP 500 JSON response via `?` in handlers.
 pub struct AppError(anyhow::Error);

@@ -1,5 +1,4 @@
 use anyhow::Context;
-use axum::{Router, routing::get};
 use axum_test::TestServer;
 use serde_json::json;
 use sqlx::{PgPool, postgres::PgPoolOptions};
@@ -9,8 +8,8 @@ use testcontainers::{
     runners::AsyncRunner,
 };
 
+use crate::app::App;
 use crate::db::{DatabaseInfo, get_database_info};
-use crate::routing::{AppState, create_router, database_test};
 
 struct TestContext {
     _container: ContainerAsync<GenericImage>,
@@ -46,7 +45,7 @@ impl TestContext {
             .await
             .context("Failed to connect to database")?;
 
-        let app = create_router(AppState { db: pool.clone() });
+        let app = App { db: pool.clone() }.into_router();
         let server = TestServer::new(app);
 
         Ok(Self {
@@ -63,7 +62,7 @@ async fn test_health_check() -> anyhow::Result<()> {
 
     let response = ctx.server.get("/health").await;
     response.assert_status_ok();
-    response.assert_text("Healthy");
+    response.assert_text("Healthy\n");
 
     Ok(())
 }
@@ -96,15 +95,9 @@ async fn test_get_database_info() -> anyhow::Result<()> {
 #[tokio::test]
 async fn test_database_error_handling() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
-
     ctx.pool.close().await;
 
-    let app = Router::new()
-        .route("/test", get(database_test))
-        .with_state(AppState { db: ctx.pool });
-    let server = TestServer::new(app);
-
-    let response = server.get("/test").await;
+    let response = ctx.server.get("/test").await;
     response.assert_status_internal_server_error();
     response.assert_json(&json!({"error": "Internal server error"}));
 
@@ -129,7 +122,7 @@ fn test_database_info_serde() -> anyhow::Result<()> {
 #[tokio::test]
 async fn test_app_state_clone() -> anyhow::Result<()> {
     let ctx = TestContext::new().await?;
-    let state = AppState {
+    let state = App {
         db: ctx.pool.clone(),
     };
 

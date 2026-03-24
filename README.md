@@ -11,10 +11,10 @@
 
 ## Installation
 
-Cargo
+Docker
 
 ```sh
-cargo install deadnews-template-rust
+docker pull ghcr.io/deadnews/deadnews-template-rust
 ```
 
 PyPI
@@ -23,8 +23,26 @@ PyPI
 uv tool install deadnews-template-rust
 ```
 
-Docker
+Cargo
 
 ```sh
-docker pull ghcr.io/deadnews/deadnews-template-rust
+cargo install deadnews-template-rust
+```
+
+## Endpoints
+
+### GET /health
+
+Health check endpoint.
+
+```sh
+curl -X GET http://127.0.0.1:8000/health
+```
+
+### GET /test
+
+Returns database name and version as JSON.
+
+```sh
+curl -X GET http://127.0.0.1:8000/test
 ```

@@ -3,14 +3,13 @@
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
+mod app;
 mod config;
 mod db;
-mod error;
-mod routing;
+mod handler;
 
+use app::App;
 use config::Config;
-use routing::{AppState, create_router};
-use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use tracing::{error, info};
 use tracing_subscriber::{EnvFilter, prelude::*};
@@ -30,19 +29,14 @@ async fn main() {
 
 async fn run() -> anyhow::Result<()> {
     let config = Config::from_env()?;
+    let app = App::new(&config).await?;
 
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&config.database_url)
-        .await?;
-
-    let app = create_router(AppState { db: pool });
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
     info!("Starting HTTP server at http://{addr}");
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
 
-    axum::serve(listener, app)
+    axum::serve(listener, app.into_router())
         .with_graceful_shutdown(shutdown_signal())
         .await?;
 
