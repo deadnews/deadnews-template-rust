@@ -1,16 +1,7 @@
 use axum::{Json, http::StatusCode, response::IntoResponse};
 use serde::Serialize;
 
-/// Application error wrapper.
-/// Wraps any error and converts it to an HTTP 500 response.
-///
-/// Usage in handlers:
-/// ```ignore
-/// async fn handler() -> Result<impl IntoResponse, AppError> {
-///     let data = fallible_operation().await?;
-///     Ok(Json(data))
-/// }
-/// ```
+/// Wraps any error into an HTTP 500 JSON response via `?` in handlers.
 pub struct AppError(anyhow::Error);
 
 impl<E: Into<anyhow::Error>> From<E> for AppError {
