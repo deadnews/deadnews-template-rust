@@ -34,6 +34,8 @@ jobs:
 
   test:
     name: Test
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -45,16 +47,18 @@ jobs:
       - name: Rust Cache
         uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
 
-      - uses: taiki-e/install-action@06203676c62f0d3c765be3f2fcfbebbcb02d09f5 # v2.69.6
+      - uses: taiki-e/install-action@0d865d5cc6d507df4765f1f866bfae8bab4e2a73 # v2.69.7
         with:
           tool: nextest,cargo-llvm-cov
 
       - name: Run tests
-        run: make test-codecov
+        run: make test-ci
 
-      - name: Upload coverage to Codecov
+      - uses: deadnews/action-coverage-badge@351262884436f6ff0e47d5ec6c361812f6ebed79 # main
         if: matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
+        with:
+          file: lcov.info
+          type: lcov
 
   cargo-deploy:
     name: Release to crates.io
@@ -68,7 +72,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Authenticate to crates.io
-        uses: rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec # v1.0.3
+        uses: rust-lang/crates-io-auth-action@bbd81622f20ce9e2dd9622e3218b975523e45bbe # v1.0.4
         id: auth
 
       - name: Set version in Cargo.toml

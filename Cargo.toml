@@ -28,8 +28,9 @@ testcontainers = { version = "0.27" }
 mimalloc = { version = "0.1" }
 
 [profile.release]
-lto   = true # Enable Link Time Optimization
-strip = true # Remove debug symbols and reduce binary size
+codegen-units = 1
+lto           = true
+strip         = true
 
 [profile.dev-build]
 inherits = "dev"
