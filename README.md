@@ -7,7 +7,7 @@
 [![GitHub: Release](https://img.shields.io/github/v/release/deadnews/deadnews-template-rust?logo=github&logoColor=white)](https://github.com/deadnews/deadnews-template-rust/releases/latest)
 [![Docker: ghcr](https://img.shields.io/badge/docker-gray.svg?logo=docker&logoColor=white)](https://github.com/deadnews/deadnews-template-rust/pkgs/container/deadnews-template-rust)
 [![CI: Main](https://img.shields.io/github/actions/workflow/status/deadnews/deadnews-template-rust/main.yml?branch=main&logo=github&logoColor=white&label=main)](https://github.com/deadnews/deadnews-template-rust/actions/workflows/main.yml)
-[![CI: Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/deadnews/ideadnews-template-rust/refs/heads/badges/coverage.json)](https://github.com/deadnews/ideadnews-template-rust)
+[![CI: Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/deadnews/deadnews-template-rust/refs/heads/badges/coverage.json)](https://github.com/deadnews/ideadnews-template-rust)
 
 ## Installation
 
