@@ -2,7 +2,7 @@
 
 > Rust Project Template
 
-[![Rust: Crates.io](https://img.shields.io/crates/v/deadnews-template-rust.svg?logo=rust&logoColor=white)](https://crates.io/crates/deadnews-template-rust)
+[![Rust: Crates.io](https://img.shields.io/badge/dynamic/json?url=https://crates.io/api/v1/crates/deadnews-template-rust&query=$.crate.max_stable_version&prefix=v&label=crates.io&logo=rust&logoColor=white&color=orange)](https://crates.io/crates/deadnews-template-rust)
 [![PyPI: Version](https://img.shields.io/pypi/v/deadnews-template-rust?logo=pypi&logoColor=white)](https://pypi.org/project/deadnews-template-rust)
 [![GitHub: Release](https://img.shields.io/github/v/release/deadnews/deadnews-template-rust?logo=github&logoColor=white)](https://github.com/deadnews/deadnews-template-rust/releases/latest)
 [![Docker: ghcr](https://img.shields.io/badge/docker-gray.svg?logo=docker&logoColor=white)](https://github.com/deadnews/deadnews-template-rust/pkgs/container/deadnews-template-rust)
