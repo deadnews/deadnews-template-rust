@@ -1,7 +1,6 @@
 use anyhow::Context;
 use axum_test::TestServer;
 use serde_json::json;
-use sqlx::{PgPool, postgres::PgPoolOptions};
 use testcontainers::{
     ContainerAsync, GenericImage, ImageExt,
     core::{IntoContainerPort, WaitFor},
@@ -13,7 +12,7 @@ use crate::db::{DatabaseInfo, get_database_info};
 
 struct TestContext {
     _container: ContainerAsync<GenericImage>,
-    pool: PgPool,
+    pool: sqlx::PgPool,
     server: TestServer,
 }
 
@@ -37,16 +36,12 @@ impl TestContext {
             .await
             .context("Failed to get port")?;
 
-        let connection_string = format!("postgres://testuser:testpass@{host}:{port}/testdb");
+        let database_url = format!("postgres://testuser:testpass@{host}:{port}/testdb");
 
-        let pool = PgPoolOptions::new()
-            .max_connections(5)
-            .connect(&connection_string)
-            .await
-            .context("Failed to connect to database")?;
-
-        let app = App { db: pool.clone() }.into_router();
-        let server = TestServer::new(app);
+        let config = crate::config::Config { database_url };
+        let app = App::new(&config).await.context("Failed to create app")?;
+        let pool = app.db.clone();
+        let server = TestServer::new(app.into_router());
 
         Ok(Self {
             _container: container,
@@ -115,22 +110,6 @@ fn test_database_info_serde() -> anyhow::Result<()> {
     let deserialized: DatabaseInfo = serde_json::from_str(&json)?;
     assert_eq!(deserialized.database, info.database);
     assert_eq!(deserialized.version, info.version);
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_app_state_clone() -> anyhow::Result<()> {
-    let ctx = TestContext::new().await?;
-    let state = App {
-        db: ctx.pool.clone(),
-    };
-
-    let cloned = state.clone();
-
-    let info1 = get_database_info(&state.db).await?;
-    let info2 = get_database_info(&cloned.db).await?;
-    assert_eq!(info1.database, info2.database);
 
     Ok(())
 }

@@ -16,6 +16,15 @@ pub struct App {
 }
 
 impl App {
+    pub async fn new(config: &Config) -> anyhow::Result<Self> {
+        let db = PgPoolOptions::new()
+            .max_connections(5)
+            .connect(&config.database_url)
+            .await?;
+
+        Ok(Self { db })
+    }
+
     pub fn into_router(self) -> Router {
         Router::new()
             .route("/health", get(health_check))
@@ -27,14 +36,5 @@ impl App {
                     .layer(CatchPanicLayer::new()),
             )
             .with_state(self)
-    }
-
-    pub async fn new(config: &Config) -> anyhow::Result<Self> {
-        let db = PgPoolOptions::new()
-            .max_connections(5)
-            .connect(&config.database_url)
-            .await?;
-
-        Ok(Self { db })
     }
 }
