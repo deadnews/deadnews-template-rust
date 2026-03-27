@@ -3,58 +3,44 @@
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
+mod app;
 mod config;
 mod db;
-mod error;
-mod routing;
+mod handler;
 
+use app::App;
 use config::Config;
-use routing::{AppState, create_router};
-use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use tracing::{error, info};
 use tracing_subscriber::{EnvFilter, prelude::*};
 
 #[tokio::main]
 async fn main() {
-    // Initialize logging
     tracing_subscriber::registry()
         .with(EnvFilter::from_default_env())
         .with(tracing_logfmt::layer())
         .init();
 
-    // Load configuration
-    let config = Config::from_env();
+    if let Err(e) = run().await {
+        error!("{e:#}");
+        std::process::exit(1);
+    }
+}
 
-    // Create database connection pool
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&config.database_url)
-        .await
-        .unwrap_or_else(|e| {
-            error!("Failed to create database pool: {e}");
-            std::process::exit(1);
-        });
+async fn run() -> anyhow::Result<()> {
+    let config = Config::from_env()?;
+    let app = App::new(&config).await?;
 
-    // Run the app
-    let app = create_router(AppState { db: pool });
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
     info!("Starting HTTP server at http://{addr}");
 
-    let listener = tokio::net::TcpListener::bind(addr)
-        .await
-        .unwrap_or_else(|e| {
-            error!("Failed to bind to address {addr}: {e}");
-            std::process::exit(1);
-        });
+    let listener = tokio::net::TcpListener::bind(addr).await?;
 
-    axum::serve(listener, app)
+    axum::serve(listener, app.into_router())
         .with_graceful_shutdown(shutdown_signal())
-        .await
-        .unwrap_or_else(|e| {
-            error!("Server error: {e}");
-            std::process::exit(1);
-        });
+        .await?;
+
+    Ok(())
 }
 
 async fn shutdown_signal() {

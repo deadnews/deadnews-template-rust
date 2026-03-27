@@ -1,11 +1,5 @@
-ci:
-  autofix_commit_msg: "chore: auto fixes from `pre-commit` hooks"
-  autoupdate_commit_msg: "chore(pre-commit): autoupdate"
-  autoupdate_schedule: quarterly
-
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
+  - repo: builtin
     hooks:
       - id: check-added-large-files
       - id: check-merge-conflict
@@ -22,12 +16,12 @@ repos:
       - id: prettier
 
   - repo: https://github.com/crate-ci/typos
-    rev: 57b11c6b7e54c402ccd9cda953f1072ec4f78e33 # frozen: v1.43.5
+    rev: 631208b7aac2daa8b707f55e7331f9112b0e062d # frozen: v1.44.0
     hooks:
       - id: typos
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: f761d025eb06bcd6a45bf152ba3593c9b8ad9a9b # frozen: 0.36.2
+    rev: 13614ab716a3113145f1294ed259d9fbe5678ff3 # frozen: 0.37.1
     hooks:
       - id: check-github-workflows
       - id: check-renovate
@@ -38,7 +32,7 @@ repos:
       - id: actionlint
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: b546b77c44c466a54a42af5499dcc0dcc1a3193f # frozen: v1.22.0
+    rev: ea2eb407b4cbce87cf0d502f36578950494f5ac9 # frozen: v1.23.1
     hooks:
       - id: zizmor
         args: [--fix=safe]

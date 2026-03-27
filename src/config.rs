@@ -1,5 +1,6 @@
 use std::env;
-use tracing::error;
+
+use anyhow::Context;
 
 #[derive(Clone)]
 pub struct Config {
@@ -7,12 +8,10 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from_env() -> Self {
-        let database_url = env::var("SERVICE_DSN").unwrap_or_else(|_| {
-            error!("SERVICE_DSN environment variable is required");
-            std::process::exit(1);
-        });
+    pub fn from_env() -> anyhow::Result<Self> {
+        let database_url =
+            env::var("SERVICE_DSN").context("SERVICE_DSN environment variable is required")?;
 
-        Self { database_url }
+        Ok(Self { database_url })
     }
 }

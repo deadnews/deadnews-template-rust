@@ -1,16 +1,19 @@
-use axum::{Json, http::StatusCode, response::IntoResponse};
+use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use serde::Serialize;
 
-/// Application error wrapper.
-/// Wraps any error and converts it to an HTTP 500 response.
-///
-/// Usage in handlers:
-/// ```ignore
-/// async fn handler() -> Result<impl IntoResponse, AppError> {
-///     let data = fallible_operation().await?;
-///     Ok(Json(data))
-/// }
-/// ```
+use crate::app::App;
+use crate::db::get_database_info;
+
+pub async fn health_check() -> &'static str {
+    "Healthy\n"
+}
+
+pub async fn database_test(State(app): State<App>) -> Result<impl IntoResponse, AppError> {
+    let info = get_database_info(&app.db).await?;
+    Ok(Json(info))
+}
+
+/// Wraps any error into an HTTP 500 JSON response via `?` in handlers.
 pub struct AppError(anyhow::Error);
 
 impl<E: Into<anyhow::Error>> From<E> for AppError {
@@ -26,7 +29,7 @@ struct ErrorResponse {
 
 impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
-        tracing::error!("{}", self.0);
+        tracing::error!("{:#}", self.0);
 
         (
             StatusCode::INTERNAL_SERVER_ERROR,

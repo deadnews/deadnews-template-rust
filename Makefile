@@ -12,14 +12,9 @@ lint-ci:
 	cargo fmt --all --check
 	cargo clippy --all-targets -- -D warnings
 test:
-	cargo nextest run
-
-test-cov:
 	cargo llvm-cov nextest --ignore-filename-regex 'test.rs'
+test-ci: test
 	cargo llvm-cov report --lcov --output-path lcov.info
-
-test-codecov:
-	cargo llvm-cov nextest --ignore-filename-regex 'test.rs' --codecov --output-path codecov.json
 
 update: up up-ci
 up:
@@ -36,9 +31,6 @@ build:
 
 goreleaser:
 	goreleaser --clean --snapshot --skip=publish
-
-doc:
-	cargo doc --no-deps --document-private-items
 
 bumped:
 	git cliff --bumped-version
