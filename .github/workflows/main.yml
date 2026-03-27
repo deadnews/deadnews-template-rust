@@ -47,15 +47,16 @@ jobs:
       - name: Rust Cache
         uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
 
-      - uses: taiki-e/install-action@328a871ad8f62ecac78390391f463ccabc974b72 # v2.69.9
+      - uses: taiki-e/install-action@80a23c5ba9e1100fd8b777106e810018ed662a7b # v2.69.12
         with:
           tool: nextest,cargo-llvm-cov
 
       - name: Run tests
         run: make test-ci
 
-      - uses: deadnews/action-coverage-badge@351262884436f6ff0e47d5ec6c361812f6ebed79 # main
-        if: matrix.os == 'ubuntu-latest'
+      - name: Upload coverage
+        uses: deadnews/coverage-badge-action@bc4aaf332f25c52d1e8dd21ef9ed0b2337ad39af # v1.0.0
+        if: github.event_name == 'push' && matrix.os == 'ubuntu-latest'
         with:
           file: lcov.info
           type: lcov
