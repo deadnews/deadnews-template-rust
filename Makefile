@@ -21,7 +21,8 @@ up:
 	cargo update --recursive --verbose
 up-ci:
 	prek auto-update --freeze
-	pinact run -update
+	pinact run --update
+	pindock run --update Dockerfile
 
 run:
 	cargo run

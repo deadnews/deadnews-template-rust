@@ -11,6 +11,7 @@ mod handler;
 use app::App;
 use config::Config;
 use std::net::SocketAddr;
+use tokio::signal::unix::{SignalKind, signal};
 use tracing::{error, info};
 use tracing_subscriber::{EnvFilter, prelude::*};
 
@@ -44,9 +45,14 @@ async fn run() -> anyhow::Result<()> {
 }
 
 async fn shutdown_signal() {
-    tokio::signal::ctrl_c()
-        .await
-        .expect("Failed to install CTRL+C signal handler");
+    let mut sigint = signal(SignalKind::interrupt()).expect("Failed to install SIGINT handler");
+    let mut sigterm = signal(SignalKind::terminate()).expect("Failed to install SIGTERM handler");
+
+    tokio::select! {
+        _ = sigint.recv() => {},
+        _ = sigterm.recv() => {},
+    }
+
     info!("Shutdown signal received");
 }
 
