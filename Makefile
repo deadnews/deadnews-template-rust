@@ -20,7 +20,7 @@ update: up up-ci
 up:
 	cargo upgrade --incompatible
 up-ci:
-	prek auto-update --freeze
+	prek update
 	pinact run --update
 	pindock run --update Dockerfile
 
