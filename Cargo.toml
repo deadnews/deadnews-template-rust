@@ -22,7 +22,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 [dev-dependencies]
 axum-test      = { version = "21.0" }
 serde_json     = { version = "1.0" }
-testcontainers = { version = "0.27" }
+testcontainers = { version = "0.28" }
 
 [target.'cfg(target_env = "musl")'.dependencies]
 mimalloc = { version = "0.1" }
