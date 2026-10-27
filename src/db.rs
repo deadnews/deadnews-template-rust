@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use sqlx::{FromRow, PgPool};
 
-#[derive(Serialize, Deserialize, FromRow)]
+#[derive(Serialize, FromRow)]
 pub struct DatabaseInfo {
     pub database: String,
     pub version: String,

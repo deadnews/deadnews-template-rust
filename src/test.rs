@@ -8,7 +8,7 @@ use testcontainers::{
 };
 
 use crate::app::App;
-use crate::db::{DatabaseInfo, get_database_info};
+use crate::db::get_database_info;
 
 struct TestContext {
     _container: ContainerAsync<GenericImage>,
@@ -69,9 +69,10 @@ async fn test_database_endpoint() -> anyhow::Result<()> {
     let response = ctx.server.get("/test").await;
     response.assert_status_ok();
 
-    let db_info: DatabaseInfo = response.json();
-    assert_eq!(db_info.database, "testdb");
-    assert!(db_info.version.contains("PostgreSQL"));
+    let db_info: serde_json::Value = response.json();
+    assert_eq!(db_info["database"], "testdb");
+    let version = db_info["version"].as_str().unwrap_or_default();
+    assert!(version.contains("PostgreSQL"), "{db_info}");
 
     Ok(())
 }
@@ -95,21 +96,6 @@ async fn test_database_error_handling() -> anyhow::Result<()> {
     let response = ctx.server.get("/test").await;
     response.assert_status_internal_server_error();
     response.assert_json(&json!({"error": "Internal server error"}));
-
-    Ok(())
-}
-
-#[test]
-fn test_database_info_serde() -> anyhow::Result<()> {
-    let info = DatabaseInfo {
-        database: "test_db".to_string(),
-        version: "PostgreSQL 13.0".to_string(),
-    };
-
-    let json = serde_json::to_string(&info)?;
-    let deserialized: DatabaseInfo = serde_json::from_str(&json)?;
-    assert_eq!(deserialized.database, info.database);
-    assert_eq!(deserialized.version, info.version);
 
     Ok(())
 }
