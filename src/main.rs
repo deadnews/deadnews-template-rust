@@ -45,8 +45,10 @@ async fn run() -> anyhow::Result<()> {
 }
 
 async fn shutdown_signal() {
-    let mut sigint = signal(SignalKind::interrupt()).expect("Failed to install SIGINT handler");
-    let mut sigterm = signal(SignalKind::terminate()).expect("Failed to install SIGTERM handler");
+    let mut sigint =
+        signal(SignalKind::interrupt()).expect("Failed to install SIGINT handler");
+    let mut sigterm =
+        signal(SignalKind::terminate()).expect("Failed to install SIGTERM handler");
 
     tokio::select! {
         _ = sigint.recv() => {},

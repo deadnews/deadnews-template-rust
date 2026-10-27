@@ -17,21 +17,21 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/rbubley/mirrors-prettier"
-rev = "0ee178619d696787ca73d210cc191d720868c631" # frozen: v3.9.6
+rev = "331f33fa4dfbcbca7c3da3620c137fde0faab273" # frozen: v3.9.10
 hooks = [
   { id = "prettier" },
 ]
 
 [[repos]]
 repo = "https://github.com/crate-ci/typos"
-rev = "bee27e3a4fd1ea2111cf90ab89cd076c870fce14" # frozen: v1.48.0
+rev = "7f9d0819ca1c008ade73f4b41fa9d258d48f605b" # frozen: v1.51.1
 hooks = [
   { id = "typos" },
 ]
 
 [[repos]]
 repo = "https://github.com/python-jsonschema/check-jsonschema"
-rev = "6b63472e72e1a91ed8a2f6d483790dfb644fa1d3" # frozen: 0.37.4
+rev = "a76b92851fc9eede9f9bc4073eb55202f34eb0df" # frozen: 0.39.0
 hooks = [
   { id = "check-github-workflows" },
   { id = "check-renovate" },
@@ -46,7 +46,7 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/zizmorcore/zizmor-pre-commit"
-rev = "067260dc5fe6ea86b7551bfd6f8b3ba4e6c93129" # frozen: v1.28.0
+rev = "c92afdf2c6ca336aaa8f39e2bd8d48f62dbd8e1f" # frozen: v1.31.1
 hooks = [
   { id = "zizmor", args = ["--fix=safe"] },
 ]
@@ -60,7 +60,7 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/aleksac/hadolint-py"
-rev = "458cb25edf664682e3e856a53a2f9af33e068297" # frozen: v2.14.0
+rev = "6e7504451511eaeb62a3e7f14d63b0296cbf86eb" # frozen: v2.15.1
 hooks = [
   { id = "hadolint" },
 ]
